@@ -1,7 +1,7 @@
 part of 'repositories.dart';
 
 class AuthRepository extends BaseRepository {
-  Future<Result<User, String?>> login(String username, String password) async {
+  Future<Result<User, Exception>> login(String username, String password) async {
     var user;
     var msg;
     try {

@@ -27,7 +27,7 @@ class _RegisterPageState extends State<RegisterPage> {
         Validators.required,
         Validators.email,
       ], asyncValidators: [
-        _checkEmail
+        CheckAsyncValidator(context, 'email'),
       ]),
       'username': FormControl<String>(
         validators: [
@@ -35,7 +35,7 @@ class _RegisterPageState extends State<RegisterPage> {
           Validators.minLength(3),
           Validators.pattern(RegExps.username, validationMessage: '只能包含字母和数字')
         ],
-        asyncValidators: [_checkUsername],
+        asyncValidators: [CheckAsyncValidator(context, 'username')],
       ),
       'password': FormControl<String>(
         validators: [Validators.required, Validators.minLength(10)],
@@ -44,7 +44,7 @@ class _RegisterPageState extends State<RegisterPage> {
         Validators.required,
       ]),
     }, validators: [
-      _checkMustMatch(),
+      CheckMustMatchValidator(),
     ]);
   }
 
@@ -64,23 +64,6 @@ class _RegisterPageState extends State<RegisterPage> {
 
       return null;
     };
-  }
-
-  Future<Map<String, dynamic>> _checkEmail(
-      AbstractControl<dynamic> control) async {
-    final error = {'available': false};
-    final available =
-        await context.read<RegisterBloc>().checkAvailable(email: control.value);
-    return available ? {} : error;
-  }
-
-  Future<Map<String, dynamic>> _checkUsername(
-      AbstractControl<dynamic> control) async {
-    final error = {'available': false};
-    final available = await context
-        .read<RegisterBloc>()
-        .checkAvailable(username: control.value);
-    return available ? {} : error;
   }
 
   @override
@@ -176,11 +159,11 @@ class _RegisterPageState extends State<RegisterPage> {
               name: 'email',
               label: '邮箱',
               hint: '绝不会被公开展示',
-              messages: {
+              messages: Map.from({
                 'required': '邮箱不能为空',
                 'email': '请正确填写邮箱',
                 'available': '邮箱不可用',
-              },
+              }),
               inputAction: TextInputAction.next,
             ),
             SizedBox(
@@ -190,12 +173,12 @@ class _RegisterPageState extends State<RegisterPage> {
               name: 'username',
               label: '用户名',
               hint: '独一无二，只包含数字和字母',
-              messages: {
+              messages: Map.from({
                 'required': '用户名不能为空',
                 'minLength': '最小长度为3',
                 'available': '用户名不可用',
                 'pattern': '用户名只能包含数字和字母'
-              },
+              }),
               inputAction: TextInputAction.next,
             ),
             SizedBox(
@@ -205,10 +188,10 @@ class _RegisterPageState extends State<RegisterPage> {
               name: 'password',
               label: '密码',
               hint: '至少10位，非简单密码',
-              messages: {
+              messages: Map.from({
                 'required': '密码不能为空',
                 'minLength': '最小长度为10',
-              },
+              }),
               obscure: true,
               inputAction: TextInputAction.next,
             ),
@@ -219,10 +202,10 @@ class _RegisterPageState extends State<RegisterPage> {
               name: 'passwordConfirm',
               label: '密码确认',
               hint: '请重复输入一次密码',
-              messages: {
+              messages: Map.from({
                 'required': '密码确认不能为空',
                 'mustMatch': '密码与确认不一致',
-              },
+              }),
               obscure: true,
               inputAction: TextInputAction.done,
             ),
@@ -248,5 +231,51 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
       ),
     );
+  }
+}
+
+class CheckMustMatchValidator extends Validator<dynamic> {
+  final String name = 'password';
+  final String confirmName = 'passwordConfirm';
+
+  @override
+  Map<String, dynamic>? validate(AbstractControl<dynamic> control) {
+    final form = control as FormGroup;
+
+    final formControl = form.control(name);
+    final matchingFormControl = form.control(confirmName);
+
+    if (formControl.value != matchingFormControl.value) {
+      matchingFormControl.setErrors({'mustMatch': true});
+    } else {
+      matchingFormControl.removeError('mustMatch');
+    }
+    return null;
+  }
+}
+
+class CheckAsyncValidator extends AsyncValidator<dynamic> {
+  final BuildContext context;
+  final String name;
+
+  const CheckAsyncValidator(this.context, this.name) : super();
+
+  @override
+  Future<Map<String, dynamic>?> validate(
+      AbstractControl<dynamic> control) async {
+    final error = {'available': false};
+    switch (name) {
+      case 'username':
+        final available = await context
+            .read<RegisterBloc>()
+            .checkAvailable(username: control.value);
+        return available ? {} : error;
+      case 'email':
+        final available = await context
+            .read<RegisterBloc>()
+            .checkAvailable(email: control.value);
+        return available ? {} : error;
+    }
+    return {};
   }
 }

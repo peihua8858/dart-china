@@ -1,4 +1,4 @@
-import 'package:badges/badges.dart';
+import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -230,12 +230,12 @@ class _MenuItem extends StatelessWidget {
         tileColor: selected ? Color(0xFFa7aec2) : null,
         horizontalTitleGap: 0,
         leading: badge
-            ? Badge(
-                position: BadgePosition.topEnd(top: 0, end: 0),
-                child: Icon(
-                  icon,
-                  color: selected ? Colors.white : Colors.grey.shade300,
-                ))
+            ? badges.Badge(
+            position: badges.BadgePosition.topEnd(top: 0, end: 0),
+            child: Icon(
+              icon,
+              color: selected ? Colors.white : Colors.grey.shade300,
+            ))
             : Icon(
                 icon,
                 color: selected ? Colors.white : Colors.grey.shade300,

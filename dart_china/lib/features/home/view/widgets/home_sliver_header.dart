@@ -55,9 +55,9 @@ class HomeSliverHeader extends SliverPersistentHeaderDelegate {
   AppBar _buildAppBar(BuildContext context, [bool titleVisiable = false]) {
     Widget menuButton = IconButton(
       icon: badge
-          ? Badge(
+          ? badges.Badge(
               child: Icon(Icons.menu),
-              position: BadgePosition.topEnd(top: 0, end: -2))
+              position: badges.BadgePosition.topEnd(top: 0, end: -2))
           : Icon(Icons.menu),
       splashRadius: kSplashRadius,
       onPressed: () {

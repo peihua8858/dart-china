@@ -27,8 +27,8 @@ class ReactiveInputWidget extends StatelessWidget {
   final bool obscure;
   final bool email;
   final bool autofocus;
-  final Map<String, String>? messages;
-  final VoidCallback? onEditComplete;
+  final Map<String, ValidationMessageFunction>? messages;
+  final ReactiveFormFieldCallback? onEditComplete;
   final FocusNode? focusNode;
   final Widget? prefix;
   final TextInputAction? inputAction;
@@ -55,9 +55,7 @@ class ReactiveInputWidget extends StatelessWidget {
             autofocus: autofocus,
             keyboardType: email ? TextInputType.emailAddress : null,
             onEditingComplete: onEditComplete,
-            validationMessages: (_) {
-              return messages ?? {};
-            },
+            validationMessages:Map.from(messages ?? {}),
             formControlName: name,
             inputFormatters: inputFormatter != null ? [inputFormatter!] : [],
             textAlignVertical: TextAlignVertical.center,

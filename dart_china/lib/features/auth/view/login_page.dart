@@ -111,9 +111,7 @@ class _LoginPageState extends State<LoginPage> {
               // autofocus: true,
               name: 'username',
               label: '用户名',
-              messages: {
-                ValidationMessage.required: '用户名不能为空',
-              },
+              messages: Map.from({ValidationMessage.required: '用户名不能为空'}),
               inputAction: TextInputAction.next,
             ),
             SizedBox(
@@ -122,9 +120,7 @@ class _LoginPageState extends State<LoginPage> {
             ReactiveInputWidget(
               name: 'password',
               label: '密码',
-              messages: {
-                ValidationMessage.required: '密码不能为空',
-              },
+              messages: Map.from({ValidationMessage.required: '密码不能为空'}),
               obscure: true,
               inputAction: TextInputAction.done,
             ),
